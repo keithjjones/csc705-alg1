@@ -15,5 +15,7 @@ parser.add_argument("-s", "--seed",
 
 args = parser.parse_args()
 
+# Create a random file, based upon seed, for the simulated malware file.
 random.seed(args.seed)
 malware = [random.randint(0, 8) for i in range(1, args.Size)]
+
