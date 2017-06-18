@@ -4,9 +4,13 @@ import math
 import time
 
 
-# Window Entropy Function
-def window_entropy():
-    # Compute the running entropy
+# Original Window Entropy Function
+def original_window_entropy():
+    # Start the time counter
+    starttime = time.process_time()
+
+    # Entropy list
+    H = [0 for i in range(1, k-j+2)]
     for x in range(1, k - j + 2):
         m = [0 for i in range(0, 256)]
         for y in range(1, j + 1):
@@ -16,6 +20,55 @@ def window_entropy():
             if m[y] != 0:
                 entropy += -(float(m[y] / j) * math.log2(float(m[y] / j)))
         H[x - 1] = entropy / K
+
+    # End the time counter
+    endtime = time.process_time()
+
+    return endtime-starttime, H
+
+# Optimized Window Entropy Function
+def optimized_window_entropy():
+    # Start the time counter
+    starttime = time.process_time()
+
+    # Entropy list
+    H = [0 for i in range(1, k-j+2)]
+
+    # Create the count list
+    m = [0 for i in range(0, 256)]
+
+    # Initial population of count list
+    for x in range(1, j+1):
+        m[malware[x-1]] += 1
+
+    # Compute initial entropy
+    entropy = float(0)
+    for y in range(0, 256):
+        if m[y] != 0:
+            entropy += -(float(m[y] / j) * math.log2(float(m[y] / j)))
+    H[0] = entropy / K
+
+    for x in range(2, k - j + 2):
+        lastval = malware[x-2]
+        nextval = malware[x+j-2]
+
+        entropy += float(m[lastval] / j) * math.log2(float(m[lastval] / j))
+        m[lastval] -= 1
+        if m[lastval] != 0:
+            entropy += -(float(m[lastval] / j) * math.log2(float(m[lastval] / j)))
+
+        if m[nextval] != 0:
+            entropy += float(m[nextval] / j) * math.log2(float(m[nextval] / j))
+        m[nextval] += 1
+        entropy += -(float(m[nextval] / j) * math.log2(float(m[nextval] / j)))
+        H[x - 1] = entropy / K
+
+    # End the time counter
+    endtime = time.process_time()
+
+    return endtime-starttime, H
+
+# Main functionality starts here...
 
 # Argument parsing
 parser = argparse.ArgumentParser(description='Calculates the entropy of a file.')
@@ -46,20 +99,33 @@ random.seed(args.seed)
 malware = [random.randint(0, 255) for i in range(1, k+1)]
 # print("Malware: {0}".format(malware))
 
-totaltime = 0
+# Create running time counters...
+totalorigtime = 0
+totalopttime = 0
 
 for a in range(0, args.average):
-    # Start the time counter
-    starttime = time.process_time()
+    # Calculate the original window entropy algorithm
+    origtimespan, origH = original_window_entropy()
+    totalorigtime += origtimespan
 
-    # Entropy list
-    H = [0 for i in range(1, k-j+2)]
+    # Calculate the optimized window entropy algorithm
+    opttimespan, optH = optimized_window_entropy()
+    totalopttime += opttimespan
 
-    # Calculate the window entropy
-    window_entropy()
-
-    endtime = time.process_time()
-    totaltime += endtime - starttime
+    # Error checking to check for algorithm similarities
+    if len(origH) != len(optH):
+        print("ERROR: H's not same length!")
+        print("Original H Length: {0}".format(len(origH)))
+        print("Optimized H Length: {0}".format(len(optH)))
+        exit(-1)
+    #
+    # if origH != optH:
+    #     print("ERROR: H's not the same!")
+    #     print("Original H: {0}".format(origH))
+    #     print("Optimized H: {0}".format(optH))
+    #     print("Difference: {0}".format([origH[i] - optH[i] for i in range(0, len(optH))]))
+    #     exit(-1)
 
 # print("Entropy: {0}".format(H))
-print("Average Running Time for {1} Iterations: {0:.4E}".format(totaltime/args.average, args.average))
+print("Original Algorithm Average Running Time for {1:,} Iterations: {0:.4E}".format(totalorigtime/args.average, args.average))
+print("Optimized Algorithm Average Running Time for {1:,} Iterations: {0:.4E}".format(totalopttime/args.average, args.average))
