@@ -1,6 +1,21 @@
 import argparse
 import random
 import math
+import time
+
+
+# Window Entropy Function
+def window_entropy():
+    # Compute the running entropy
+    for x in range(1, k - j + 2):
+        m = [0 for i in range(0, 256)]
+        for y in range(1, j + 1):
+            m[malware[x + y - 2]] += 1
+        entropy = float(0)
+        for y in range(0, 256):
+            if m[y] != 0:
+                entropy += -(float(m[y] / j) * math.log2(float(m[y] / j)))
+        H[x - 1] = entropy / K
 
 # Argument parsing
 parser = argparse.ArgumentParser(description='Calculates the entropy of a file.')
@@ -16,6 +31,9 @@ parser.add_argument("-s", "--seed",
 parser.add_argument("-K", "--K",
                     help="The K scale value. Must not be zero."
                          "", default=1, type=int, required=False)
+parser.add_argument("-a", "--average",
+                    help="The number of runs for averaging, greater than zero."
+                         "", default=1, type=int, required=False)
 
 args = parser.parse_args()
 
@@ -26,20 +44,22 @@ K = args.K
 # Create a random file, based upon seed, for the simulated malware file.
 random.seed(args.seed)
 malware = [random.randint(0, 255) for i in range(1, k+1)]
-print("Malware: {0}".format(malware))
+# print("Malware: {0}".format(malware))
 
-# Entropy list
-H = [0 for i in range(1, k-j+2)]
+totaltime = 0
 
-# Compute the running entropy
-for x in range(1, k-j+2):
-    m = [0 for i in range(0, 256)]
-    for y in range(1, j+1):
-        m[malware[x+y-2]] += 1
-    entropy = float(0)
-    for y in range(0, 256):
-        if m[y] != 0:
-            entropy += -(float(m[y]/j) * math.log2(float(m[y]/j)))
-    H[x-1] = entropy/K
+for a in range(0, args.average):
+    # Start the time counter
+    starttime = time.process_time()
 
-print("Entropy: {0}".format(H))
+    # Entropy list
+    H = [0 for i in range(1, k-j+2)]
+
+    # Calculate the window entropy
+    window_entropy()
+
+    endtime = time.process_time()
+    totaltime += endtime - starttime
+
+# print("Entropy: {0}".format(H))
+print("Average Running Time for {1} Iterations: {0:.4E}".format(totaltime/args.average, args.average))
