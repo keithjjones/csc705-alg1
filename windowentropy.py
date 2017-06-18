@@ -26,20 +26,21 @@ def original_window_entropy():
 
     return endtime-starttime, H
 
+
 # Optimized Window Entropy Function
 def optimized_window_entropy():
     # Start the time counter
     starttime = time.process_time()
 
     # Entropy list
-    H = [0 for i in range(1, k-j+2)]
+    H = [0 for i in range(1, k - j + 2)]
 
     # Create the count list
     m = [0 for i in range(0, 256)]
 
     # Initial population of count list
-    for x in range(1, j+1):
-        m[malware[x-1]] += 1
+    for x in range(1, j + 1):
+        m[malware[x - 1]] += 1
 
     # Compute initial entropy
     entropy = float(0)
@@ -49,13 +50,14 @@ def optimized_window_entropy():
     H[0] = entropy / K
 
     for x in range(2, k - j + 2):
-        lastval = malware[x-2]
-        nextval = malware[x+j-2]
+        lastval = malware[x - 2]
+        nextval = malware[x + j - 2]
 
         entropy += float(m[lastval] / j) * math.log2(float(m[lastval] / j))
         m[lastval] -= 1
         if m[lastval] != 0:
-            entropy += -(float(m[lastval] / j) * math.log2(float(m[lastval] / j)))
+            entropy += -(
+            float(m[lastval] / j) * math.log2(float(m[lastval] / j)))
 
         if m[nextval] != 0:
             entropy += float(m[nextval] / j) * math.log2(float(m[nextval] / j))
@@ -66,7 +68,7 @@ def optimized_window_entropy():
     # End the time counter
     endtime = time.process_time()
 
-    return endtime-starttime, H
+    return endtime - starttime, H
 
 # Main functionality starts here...
 
