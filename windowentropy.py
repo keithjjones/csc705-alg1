@@ -31,6 +31,7 @@ print("Malware: {0}".format(malware))
 # Entropy list
 H = [0 for i in range(1, k-j+2)]
 
+# Compute the running entropy
 for x in range(1, k-j+2):
     m = [0 for i in range(0, 256)]
     for y in range(1, j+1):
