@@ -18,7 +18,7 @@ def original_window_entropy():
         entropy = float(0)
         for y in range(0, 256):
             if m[y] != 0:
-                entropy += -(float(m[y] / j) * math.log2(float(m[y] / j)))
+                entropy += -((float(m[y]) / j) * math.log2(float(m[y]) / j))
         H[x - 1] = entropy / K
 
     # End the time counter
@@ -98,7 +98,12 @@ K = args.K
 
 # Create a random file, based upon seed, for the simulated malware file.
 random.seed(args.seed)
-malware = [random.randint(0, 255) for i in range(1, k+1)]
+# Random Data
+malware = [random.randint(0, 256) for i in range(1, k+1)]
+# No Entropy Data
+# malware = [1 for i in range(0, 256)]
+# Full Entropy Data
+# malware = [i for i in range(0, 256)]
 # print("Malware: {0}".format(malware))
 
 # Create running time counters...
@@ -131,3 +136,6 @@ for a in range(0, args.average):
 # print("Entropy: {0}".format(H))
 print("Original Algorithm Average Running Time for {1:,} Iterations: {0:.4E}".format(totalorigtime/args.average, args.average))
 print("Optimized Algorithm Average Running Time for {1:,} Iterations: {0:.4E}".format(totalopttime/args.average, args.average))
+
+print("Original algorithm entropy vector: {0}".format(origH))
+print("Optimized algorithm entropy vector: {0}".format(optH))
