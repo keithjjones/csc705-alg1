@@ -139,4 +139,4 @@ print("Optimized Algorithm Average Running Time for {1:,} Iterations: {0:.4E}".f
 
 # print("Original algorithm entropy vector: {0}".format(origH))
 # print("Optimized algorithm entropy vector: {0}".format(optH))
-print("Difference: {0}".format([origH[i] - optH[i] for i in range(0, len(optH))]))
+# print("Difference: {0}".format([origH[i] - optH[i] for i in range(0, len(optH))]))
