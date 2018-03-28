@@ -99,7 +99,7 @@ K = args.K
 # Create a random file, based upon seed, for the simulated malware file.
 random.seed(args.seed)
 # Random Data
-malware = [random.randint(0, 256) for i in range(1, k+1)]
+malware = [random.randint(0, 255) for i in range(1, k+1)]
 # No Entropy Data
 # malware = [1 for i in range(0, 256)]
 # Full Entropy Data
@@ -137,5 +137,6 @@ for a in range(0, args.average):
 print("Original Algorithm Average Running Time for {1:,} Iterations: {0:.4E}".format(totalorigtime/args.average, args.average))
 print("Optimized Algorithm Average Running Time for {1:,} Iterations: {0:.4E}".format(totalopttime/args.average, args.average))
 
-print("Original algorithm entropy vector: {0}".format(origH))
-print("Optimized algorithm entropy vector: {0}".format(optH))
+# print("Original algorithm entropy vector: {0}".format(origH))
+# print("Optimized algorithm entropy vector: {0}".format(optH))
+print("Difference: {0}".format([origH[i] - optH[i] for i in range(0, len(optH))]))
